@@ -1,4 +1,4 @@
 DOMAIN = "luxtronik2"
 
-CONF_IP = "ip"
-CONF_PASSWORD = "password"
+CONF_IP = "192.168.178.108"
+CONF_PASSWORD = "1234"
