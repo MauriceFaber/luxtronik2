@@ -3,9 +3,10 @@ import websocket
 import xml.etree.ElementTree as ET
 
 class LuxtronikClient:
-    def __init__(self, ip, password):
+    def __init__(self, ip: str, password: str, port: int = 8214):
         self.ip = ip
         self.password = password
+        self.port = port
         self.values = {}
         self.temp_id = None
         self.waerm_id = None
@@ -23,7 +24,7 @@ class LuxtronikClient:
 
     async def _connect_and_poll(self):
         ws = websocket.WebSocket()
-        ws.connect(f"ws://{self.ip}:8214", subprotocols=["Lux_WS"])
+        ws.connect(f"ws://{self.ip}:{self.port}", subprotocols=["Lux_WS"])
         ws.send(f"LOGIN;{self.password}")
 
         # initial navigation from WS
