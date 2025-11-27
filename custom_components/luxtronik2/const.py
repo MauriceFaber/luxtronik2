@@ -1,4 +1,7 @@
 DOMAIN = "luxtronik2"
 
-CONF_IP = "192.168.178.108"
-CONF_PASSWORD = "1234"
+CONF_IP = "ip"
+CONF_PASSWORD = "password"
+CONF_PORT = "port"
+
+DEFAULT_PORT = 8214

@@ -1,30 +1,31 @@
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.core import callback
+
 from .const import DOMAIN
 
-SENSOR_KEYS = [
-    "Vorlauf",
-    "Rücklauf",
-    "Warmwasser-Ist",
-    "Warmwasser-Soll",
-    "Durchfluss"
-]
 
-async def async_setup_platform(hass, config, add_entities, discovery_info=None):
-    client = list(hass.data[DOMAIN].values())[0]
+async def async_setup_entry(hass, entry, async_add_entities):
+    client = hass.data[DOMAIN][entry.entry_id]
 
-    sensors = [ LuxtronikSensor(client, key) for key in SENSOR_KEYS ]
-    add_entities(sensors)
+    sensors = [
+        LuxtronikTemperatureSensor(client, "Vorlauf", "vorlauf"),
+        LuxtronikTemperatureSensor(client, "Rücklauf", "ruecklauf"),
+    ]
 
-class LuxtronikSensor(SensorEntity):
-    def __init__(self, client, key):
-        self.client = client
-        self.key = key
-        self._attr_name = f"Luxtronik {key}"
+    async_add_entities(sensors, True)
+
+
+class LuxtronikTemperatureSensor(SensorEntity):
+    def __init__(self, client, name, field):
+        self._client = client
+        self._name = name
+        self._field = field
+        self._attr_name = name
+        self._attr_unique_id = f"luxtronik2_{field}"
 
     @property
     def native_value(self):
-        return self.client.get_value(self.key)
+        return self._client.get_value(self._field)
 
-    @property
-    def should_poll(self):
-        return False
+    async def async_update(self):
+        await self._client.request_update()
