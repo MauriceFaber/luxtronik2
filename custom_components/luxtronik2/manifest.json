@@ -1,7 +1,7 @@
 {
   "domain": "luxtronik2",
   "name": "Luxtronik Heatpump MF",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "documentation": "https://github.com/MauriceFaber/luxtronik2",
   "requirements": ["websocket-client"],
   "dependencies": [],
