@@ -2,6 +2,7 @@ import asyncio
 import websocket
 import xml.etree.ElementTree as ET
 
+
 class LuxtronikClient:
     def __init__(self, ip: str, password: str, port: int = 8214):
         self.ip = ip
@@ -10,6 +11,21 @@ class LuxtronikClient:
         self.values = {}
         self.temp_id = None
         self.waerm_id = None
+
+    async def connect_once(self):
+        import websocket
+
+        self.ws = websocket.WebSocket()
+        self.ws.connect(f"ws://{self.ip}:{self.port}", subprotocols=["Lux_WS"])
+        self.ws.send(f"LOGIN;{self.password}")
+
+    async def test_connection(self):
+        import asyncio
+
+        try:
+            await asyncio.wait_for(self.connect_once(), timeout=5)
+        except Exception as e:
+            raise e
 
     def get_value(self, key):
         return self.values.get(key)
