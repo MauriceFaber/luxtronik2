@@ -4,8 +4,9 @@
   "codeowners": ["@MauriceFaber"],
   "config_flow": true,
   "version": "v1.0",
-  "documentation": "https://www.home-assistant.io/integrations/luxtronik2",
+  "documentation": "https://github.com/MauriceFaber/luxtronik2",
   "integration_type": "hub",
+  "dependencies": [],
   "iot_class": "local_push",
   "quality_scale": "bronze",
   "requirements": ["websocket-client==1.8.0"]
