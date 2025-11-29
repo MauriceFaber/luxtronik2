@@ -2,7 +2,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
 
-from .const import DOMAIN, CONF_IP, CONF_PASSWORD, CONF_PORT
+from .const import DOMAIN, CONF_IP, CONF_PASSWORD, CONF_PORT, CONF_INTERVAL
 
 
 class LuxtronikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -38,6 +38,7 @@ class LuxtronikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_IP): str,
                 vol.Required(CONF_PASSWORD): str,
                 vol.Optional(CONF_PORT, default=8214): int,
+                vol.Optional(CONF_INTERVAL, default=10): int,
             }
         )
 

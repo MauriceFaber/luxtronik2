@@ -2,7 +2,15 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
 
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, CONF_IP, CONF_PORT, CONF_PASSWORD
+from .const import (
+    DOMAIN,
+    CONF_IP,
+    CONF_PORT,
+    CONF_PASSWORD,
+    CONF_INTERVAL,
+    DEFAULT_PORT,
+    DEFAULT_INTERVAL,
+)
 from .websocket_client import LuxtronikClient
 
 from homeassistant.helpers import config_validation as cv
@@ -17,24 +25,30 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Set up Luxtronik via config entry."""
+
     ip = entry.data[CONF_IP]
-    port = entry.data.get(CONF_PORT, 8214)
     pwd = entry.data[CONF_PASSWORD]
+    port = entry.data.get(CONF_PORT, DEFAULT_PORT)
+    inverval = entry.data.get(CONF_INTERVAL, DEFAULT_INTERVAL)
 
-    client = LuxtronikClient(ip, pwd, port)
+    client = LuxtronikClient(ip, pwd, port, inverval)
 
+    # Test connection (Bronze requirement)
     try:
-        # Testverbindung herstellen
         await client.test_connection()
-    except Exception as err:
-        raise ConfigEntryNotReady from err
+    except Exception as exc:
+        raise ConfigEntryNotReady from exc
 
+    # Store shared instance
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = client
-    entry.runtime_data = client
 
+    entry.runtime_data = client  # Bronze requirement
+
+    # 🚀 WICHTIG: Hintergrund-Task starten
+    hass.loop.create_task(client.run())
     await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
-
     return True
 
 
