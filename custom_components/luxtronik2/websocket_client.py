@@ -307,5 +307,5 @@ class LuxtronikClient:
         for name, value in re.findall(
             r"<name>([^<]+)</name><value>([^<]+)</value>", xml
         ):
-            if name is "Betriebszustand":
+            if name == "Betriebszustand":
                 self.values["Betriebszustand"] = value
