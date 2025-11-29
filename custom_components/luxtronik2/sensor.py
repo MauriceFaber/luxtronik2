@@ -110,6 +110,8 @@ async def async_setup_entry(
     for key, name in binary_outputs.items():
         sensors.append(LuxtronikBinaryOutput(client, name, key))
 
+    sensors.append(LuxtronikStringSensor(client, "Betriebszustand", "Betriebszustand"));
+
     async_add_entities(sensors, True)
 
 
@@ -209,6 +211,27 @@ class LuxtronikBinaryOutput(BinarySensorEntity):
             return None
 
         return str(value).lower() == "ein"
+
+    @callback
+    def _handle_client_update(self):
+        """Handle push-update from client."""
+        self.async_write_ha_state()
+
+
+class LuxtronikStringSensor(SensorEntity):
+    def __init__(self, client, name, field):
+        self._client = client
+        self._field = field
+        self._client.register_listener(self._handle_client_update)
+        self._attr_name = f"{name}"
+        self._attr_unique_id = f"luxtronik2_{field}"
+        self._attr_device_class = None
+        self._attr_native_unit_of_measurement = None
+        self._attr_state_class = None
+
+    @property
+    def native_value(self):
+        return self._client.get_value(self._field)
 
     @callback
     def _handle_client_update(self):

@@ -24,6 +24,7 @@ class LuxtronikClient:
         self.temp_id = None
         self.waerm_id = None
         self.output_id = None
+        self.state_id = None
         self.values["heizleistung"] = None
 
     def register_listener(self, callback):
@@ -126,9 +127,14 @@ class LuxtronikClient:
             xml_outputs = await asyncio.to_thread(self.ws.recv)
             self._parse_outputs(xml_outputs)
 
+        # Status
+        if self.state_id:
+            await asyncio.to_thread(self.ws.send, f"GET;{self.state_id}")
+            xml_state = await asyncio.to_thread(self.ws.recv)
+            self._parse_state(xml_state)
+
         # Heizleistung berechnen
         self._calculate_heizleistung()
-
         self._notify_listeners()
 
     def _calculate_heizleistung(self):
@@ -190,6 +196,11 @@ class LuxtronikClient:
             m = re.search(r"<item id='([^']+)'><name>Ausgänge</name>", xml)
             if m:
                 self.output_id = m.group(1)
+
+        if "Anlagenstatus" in xml:
+            m = re.search(r"<item id='([^']+)'><name>Anlagenstatus</name>", xml)
+            if m:
+                self.state_id = m.group(1)
 
     # -------------------------------------------------------------
     def get_value(self, key):
@@ -291,3 +302,10 @@ class LuxtronikClient:
         ):
             if name in OUTPUT_MAP:
                 self.values[OUTPUT_MAP[name]] = value
+
+    def _parse_state(self, xml: str):
+        for name, value in re.findall(
+            r"<name>([^<]+)</name><value>([^<]+)</value>", xml
+        ):
+            if name is "Betriebszustand":
+                self.values["Betriebszustand"] = value

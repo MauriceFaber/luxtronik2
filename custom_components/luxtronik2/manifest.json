@@ -3,7 +3,7 @@
   "name": "Luxtronik Heatpump MF",
   "codeowners": ["@MauriceFaber"],
   "config_flow": true,
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "documentation": "https://github.com/MauriceFaber/luxtronik2",
   "integration_type": "hub",
   "dependencies": [],
