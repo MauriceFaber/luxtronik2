@@ -1,14 +1,13 @@
 from homeassistant.components.sensor import (
-    SensorEntity,
     SensorDeviceClass,
+    SensorEntity,
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from homeassistant.core import callback
 
 
 async def async_setup_entry(
@@ -110,7 +109,7 @@ async def async_setup_entry(
     for key, name in binary_outputs.items():
         sensors.append(LuxtronikBinaryOutput(client, name, key))
 
-    sensors.append(LuxtronikStringSensor(client, "Betriebszustand", "Betriebszustand"));
+    sensors.append(LuxtronikStringSensor(client, "Betriebszustand", "Betriebszustand"))
 
     async_add_entities(sensors, True)
 
@@ -190,8 +189,8 @@ class LuxtronikPowerSensor(SensorEntity):
 
 
 from homeassistant.components.binary_sensor import (
-    BinarySensorEntity,
     BinarySensorDeviceClass,
+    BinarySensorEntity,
 )
 
 

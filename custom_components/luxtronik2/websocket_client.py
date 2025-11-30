@@ -1,6 +1,7 @@
-import re
 import asyncio
 import logging
+import re
+
 import websocket
 
 _LOGGER = logging.getLogger(__name__)
@@ -149,7 +150,7 @@ class LuxtronikClient:
                 flow = float(self.values.get("durchfluss"))  # l/h
 
             except (TypeError, ValueError):
-                return None
+                return
 
             # Platzhalterformel (du gibst später genau an)
             delta = vor - rueck
@@ -304,8 +305,12 @@ class LuxtronikClient:
                 self.values[OUTPUT_MAP[name]] = value
 
     def _parse_state(self, xml: str):
+        _LOGGER.debug(f"Luxtronik2 Betriebszustand: {xml}")
+
         for name, value in re.findall(
             r"<name>([^<]+)</name><value>([^<]+)</value>", xml
         ):
+            _LOGGER.debug(f"Luxtronik2 state values: {name} = {value}")
             if name == "Betriebszustand":
+                _LOGGER.debug(f"Luxtronik2 Betriebszusand gefunden mit Wert {value}")
                 self.values["Betriebszustand"] = value

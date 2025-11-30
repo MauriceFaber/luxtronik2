@@ -1,20 +1,17 @@
 from homeassistant.config_entries import ConfigEntry, ConfigEntryNotReady
-
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 
 from .const import (
-    DOMAIN,
-    CONF_IP,
-    CONF_PORT,
-    CONF_PASSWORD,
     CONF_INTERVAL,
-    DEFAULT_PORT,
+    CONF_IP,
+    CONF_PASSWORD,
+    CONF_PORT,
     DEFAULT_INTERVAL,
+    DEFAULT_PORT,
+    DOMAIN,
 )
 from .websocket_client import LuxtronikClient
-
-from homeassistant.helpers import config_validation as cv
-from .const import DOMAIN
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
